@@ -1,35 +1,65 @@
+import streamlit as st
 import joblib
 
-# Dữ liệu khách hàng test: [Tuổi, Thu nhập (Triệu), Điểm tín dụng, Số lần nợ xấu]
-customer1 = [[38, 90, 600, 5]]
+# 1. Đặt cấu hình trang web (Tên tab, icon)
+st.set_page_config(page_title="AI Bank Approval", page_icon="🏦", layout="centered")
 
-model_url = "./model/credit_scoring_model.pkl"
+# 2. Tiêu đề trang web
+st.title("🏦 Hệ Thống Phê Duyệt Tín Dụng Tự Động")
+st.subheader("Ứng dụng AI hỗ trợ thẩm định khoản vay - Version 1.0")
+st.write("---")
 
-try:
-    # Tải model
-    model_scoring_credit = joblib.load(model_url)
+# 3. Tạo các ô nhập liệu đẹp mắt ở giao diện bên trái (Sidebar) hoặc chính giữa
+st.sidebar.header("📋 Nhập thông tin khách hàng")
 
-    # Dự đoán (Lấy phần tử đầu tiên [0] vì kết quả trả về là một mảng)
-    ket_qua = model_scoring_credit.predict(customer1)[0]
+tuoi = st.sidebar.number_input(
+    "Tuổi của khách hàng:", min_value=18, max_value=100, value=30, step=1
+)
+thu_nhap = st.sidebar.slider(
+    "Thu nhập hàng tháng (Triệu VNĐ):", min_value=0, max_value=200, value=25
+)
+diem_td = st.sidebar.slider(
+    "Điểm tín dụng CIC (300 - 850):", min_value=300, max_value=850, value=650
+)
+no_xau = st.sidebar.selectbox(
+    "Số lần từng có nợ xấu:", options=[0, 1, 2, 3, 4, 5], index=0
+)
 
-    # Giao diện in kết quả trực quan
-    print("=" * 45)
-    print("      HỆ THỐNG ĐÁNH GIÁ TÍN DỤNG AI      ")
-    print("=" * 45)
-    print(f"📊 Dữ liệu đầu vào: {customer1[0]}")
-    print("-" * 45)
+# 4. Thiết kế nút bấm và xử lý logic khi người dùng bấm nút
+if st.button("🚀 Kiểm Tra Hồ Sơ"):
+    st.write("### 🔍 Kết quả thẩm định:")
 
-    # Dựa theo bộ dữ liệu của bạn: 1 là Duyệt (Tốt), 0 là Từ chối (Xấu)
-    if ket_qua == 1:
-        print("🟢 KẾT QUẢ: PHÊ DUYỆT (APPROVED)")
-        print("📝 Đánh giá: Khách hàng có hồ sơ an toàn, đủ điều kiện giải ngân.")
-    elif ket_qua == 0:
-        print("🔴 KẾT QUẢ: TỪ CHỐI (REJECTED)")
-        print("📝 Đánh giá: Hồ sơ rủi ro cao hoặc có lịch sử nợ xấu.")
+    # ---------------------------------------------------
+    # VÒNG 1: BỘ LỌC LUẬT CỨNG (KNOCK-OUT RULES)
+    # ---------------------------------------------------
+    if no_xau > 0:
+        st.error("🔴 KẾT QUẢ: TỪ CHỐI NGAY LẬP TỨC (REJECTED)")
+        st.warning(
+            "⚠️ Lý do: Khách hàng vi phạm chính sách cốt lõi của ngân hàng (Có lịch sử nợ xấu)."
+        )
+    # VÒNG 2: GỌI BỘ NÃO AI (Chỉ chạy khi hồ sơ sạch nợ xấu)
+    # ---------------------------------------------------
+    else:
+        try:
+            # Load file pkl lên
+            ai_bank = joblib.load("model/credit_scoring_model.pkl")
+            # Chuẩn bị dữ liệu và dự đoán
+            ho_so_moi = [[tuoi, thu_nhap, diem_td, no_xau]]
+            ket_qua = ai_bank.predict(ho_so_moi)
+            print("test kq", ket_qua)
+            if ket_qua[0] == 1:
+                st.success("🟢 KẾT QUẢ: PHÊ DUYỆT (APPROVED)")
+                st.balloons()  # Hiệu ứng bóng bay chúc mừng cho giao diện thêm xịn!
+                st.info(
+                    "📝 Đánh giá: AI xác nhận hồ sơ an toàn, đạt đủ điểm uy tín để giải ngân."
+                )
+            else:
+                st.error("🔴 KẾT QUẢ: TỪ CHỐI (REJECTED)")
+                st.info(
+                    "📝 Đánh giá: AI phát hiện rủi ro tiềm ẩn dựa trên mô hình hành vi tài chính."
+                )
 
-    print("=" * 45)
-
-except FileNotFoundError:
-    print(f"❌ Lỗi: Không tìm thấy file model tại đường dẫn '{model_url}'.")
-except Exception as e:
-    print(f"❌ Có lỗi xảy ra: {e}")
+        except Exception as e:
+            st.error(
+                "Lỗi: Không tìm thấy file bộ não 'credit_scoring_model'. Hãy chắc chắn bạn đã đặt nó chung thư mục!"
+            )

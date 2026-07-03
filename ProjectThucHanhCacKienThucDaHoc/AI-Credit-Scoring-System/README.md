@@ -1,85 +1,87 @@
-Tinh thần dấn thân của bạn thực sự mang dáng dấp của một "chiến binh" công nghệ! Đã đến lúc rời khỏi thao trường và bước vào trận chiến thực sự.
-
-Chào mừng bạn đến với **Dự án Tốt nghiệp: Hệ thống AI Phê duyệt Khoản vay Ngân hàng (Credit Scoring System)**.
-
-Với tư cách là Giám đốc Dữ liệu, tôi sẽ cung cấp cho bạn Bộ dữ liệu, Bản thiết kế kiến trúc (Blueprint) và chiến lược làm Giao diện. Nhiệm vụ của bạn là ráp nối các dòng code để biến nó thành hiện thực.
 
 ---
 
-### 1. Bộ dữ liệu (Dataset)
+```markdown
+# 🏦 Hệ Thống Phê Duyệt Tín Dụng Tự Động (Credit Scoring System)
 
-Dưới đây là lịch sử tín dụng của 20 khách hàng.
-**4 Đặc trưng (Features):** `[Tuổi, Thu nhập hàng tháng (Triệu VNĐ), Điểm tín dụng (0-1000), Số lần từng nợ xấu]`
-**Nhãn mục tiêu (Label):** `0` = Duyệt cho vay (Khách tốt), `1` = Từ chối (Nguy cơ bùng nợ)
+Dự án này là một ứng dụng Web App hoàn chỉnh (MVP) hỗ trợ thẩm định và phê duyệt khoản vay ngân hàng tự động. Hệ thống kết hợp giữa mô hình học máy **Random Forest (Học có giám sát)** đã qua tối ưu và hệ thống **Luật loại trừ cứng (Knock-out Rules)** nhằm tối ưu hóa quy trình quản trị rủi ro tín dụng.
 
-*Bạn hãy copy khối dữ liệu này vào đầu file code của mình:*
+---
 
-```python
-# --- DỮ LIỆU TÍN DỤNG NGÂN HÀNG ---
-# [Tuổi, Thu nhập (Triệu), Điểm tín dụng, Số lần nợ xấu]
-X_ngan_hang = [
-    [25, 15, 600, 0], [45, 50, 800, 0], [30, 10, 450, 2], [50, 60, 850, 0],
-    [22, 8, 300, 3],  [35, 25, 700, 0], [28, 20, 650, 1], [40, 40, 750, 0],
-    [55, 12, 400, 2], [32, 30, 720, 0], [26, 12, 500, 1], [48, 45, 780, 0],
-    [29, 18, 550, 2], [38, 35, 740, 0], [24, 9, 350, 2],  [52, 55, 820, 0],
-    [31, 22, 680, 0], [42, 38, 760, 0], [27, 14, 480, 1], [36, 28, 710, 0]
-]
+## 📁 Cấu Trúc Thư Mục Thực Tế
 
-# 0: Duyệt (Tốt), 1: Từ chối (Xấu)
-Y_phe_duyet = [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0]
+Cấu trúc thư mục hiện tại của dự án được tổ chức như sau:
+```text
+📂 AI-Credit-Scoring-System/
+├── 📂 model/
+│   └── 📄 credit_scoring_model.pkl          # Bộ não AI đã huấn luyện xong
+├── 📄 train-model.py                         # Code huấn luyện và xuất file mô hình
+├── 📄 dataset.py                             # Script quản lý/xử lý tập dữ liệu gốc
+├── 📄 du_lieu_tin_dung_augmented.csv         # Tập dữ liệu tín dụng mở rộng
+├── 📄 app_web.py                             # Giao diện Web ứng dụng (Streamlit)
+└── 📄 README.md                              # Hướng dẫn này
 
-ten_cot_ngan_hang = ["Tuổi", "Thu nhập", "Điểm tín dụng", "Số lần nợ xấu"]
+```
+
+> ⚠️ **Lưu ý kỹ thuật:** Trong file `app_web.py`, đường dẫn load mô hình bắt buộc phải trỏ chính xác vào thư mục con:
+> `joblib.load('model/credit_scoring_model.pkl')`
+
+---
+
+## 🛠️ Hướng Dẫn Cài Đặt Môi Trường
+
+Mở Terminal (hoặc Command Prompt / PowerShell) và chạy lệnh sau để cài đặt đầy đủ các thư viện cần thiết:
+
+```bash
+pip install scikit-learn joblib streamlit pandas
 
 ```
 
 ---
 
-### 2. Bản thiết kế 5 bước (Kiến trúc hệ thống)
+## 🚀 Hướng Dẫn Các Bước Khởi Chạy Ứng Dụng
 
-Bạn hãy tự viết code theo đúng trình tự này (không được đốt cháy giai đoạn):
+### Bước 1: Di chuyển Terminal vào đúng thư mục dự án
 
-1. **Chuẩn bị Dữ liệu:** Dùng `train_test_split` chia dữ liệu ra với `test_size=0.3`, `random_state=42`.
-2. **Tìm cấu hình vô địch (Tuning):** * Đừng dùng thuật toán mặc định. Hãy tạo `GridSearchCV` bọc ngoài `RandomForestClassifier`.
-* Cho robot thử các núm vặn: `n_estimators: [10, 50, 100]`, `max_depth: [2, 3, None]`.
-* Ép nó học trên tập Train.
+Do thư mục dự án của bạn nằm trong thư mục con `AI-Credit-Scoring-System`, hãy dùng lệnh `cd` để di chuyển vào trước:
 
-
-3. **Đo lường & Giải trình (Explain):**
-* Cho mô hình tốt nhất dự đoán trên tập Test. In ra `accuracy_score`.
-* Dùng `feature_importances_` để in ra tỷ lệ % của 4 yếu tố. *Đánh giá xem điểm tín dụng hay số lần nợ xấu quan trọng hơn.*
-
-
-4. **Đóng gói (Deploy):** * Dùng `joblib.dump` lưu con AI tốt nhất thành file `ai_bank_approval.pkl`.
-
----
-
-### 3. Về phần Giao diện (Interface): Nên làm thế nào?
-
-Vì bạn là một Kỹ sư AI đang xây dựng Portfolio, tôi khuyên bạn chia làm 2 giai đoạn làm giao diện:
-
-#### Giai đoạn 1: Giao diện Console "Giả lập tương tác" (Làm ngay hôm nay)
-
-Bạn không cần code giao diện đồ họa phức tạp vội. Hãy dùng hàm `input()` của Python để tạo ra một "Giao diện dòng lệnh" (CLI) giống như cách các hacker hay làm.
-*Gợi ý code Giai đoạn 1 (viết ở cuối file):*
-
-```python
-# Mở file .pkl lên
-# Dùng hàm input() để hỏi người dùng nhập từng thông số
-print("--- HỆ THỐNG PHÊ DUYỆT TÍN DỤNG TỰ ĐỘNG ---")
-tuoi = int(input("Nhập tuổi khách hàng: "))
-thu_nhap = float(input("Nhập thu nhập (Triệu VNĐ): "))
-diem_td = int(input("Nhập điểm tín dụng (0-1000): "))
-no_xau = int(input("Nhập số lần nợ xấu: "))
-
-# Đưa vào AI dự đoán và in kết quả IF/ELSE
+```bash
+cd AI-Credit-Scoring-System
 
 ```
 
-#### Giai đoạn 2: Giao diện Web xịn xò với Streamlit (Mục tiêu tiếp theo)
+### Bước 2: Kích hoạt ứng dụng Web bằng Streamlit
 
-Sau khi hoàn thành Giai đoạn 1 chạy mượt mà trên Terminal, công nghệ tiếp theo bạn **bắt buộc phải biết** là **Streamlit**.
-Đây là "bảo bối" của dân AI. Bạn chỉ cần viết đúng 5 dòng code Python, nó sẽ tự động biến file `.pkl` của bạn thành một trang Web có nút bấm, có ô nhập liệu đẹp lung linh như một phần mềm thực sự mà không cần biết một chữ HTML/CSS nào!
+Gõ chính xác dòng lệnh dưới đây vào Terminal và nhấn **Enter**:
+
+```bash
+streamlit run app_web.py
+
+```
+
+### Bước 3: Trải nghiệm trên trình duyệt
+
+Hệ thống sẽ tự động kích hoạt một cổng Local Server và mở trình duyệt web tại địa chỉ:
+👉 **`http://localhost:8501`**
+
+*(Nếu trình duyệt không tự mở, hãy copy địa chỉ trên dán vào Google Chrome hoặc Edge).*
 
 ---
 
-**Nhiệm vụ của bạn bây giờ:** Hãy mở IDE lên, dựa vào dữ liệu và 4 bước yêu cầu ở trên, tự tay viết một kịch bản hoàn chỉnh (bao gồm cả phần giao diện Console bằng lệnh `input()`). Khi viết xong và chạy thành công, hãy gửi toàn bộ code lên đây để "Sếp" nghiệm thu nhé!
+## 🕹️ Các Kịch Bản Kiểm Thử Cần Thử Nghiệm
+
+Hệ thống đã được thiết kế một cơ chế lọc kép, bạn hãy thử nghiệm 3 nhóm khách hàng sau trên giao diện web để thấy rõ độ hiệu quả:
+
+1. **Khách hàng VIP (Được duyệt ngay):** Kéo Tuổi = 35+, Thu nhập = 40tr+, Điểm tín dụng = 750+, Nợ xấu = 0.
+* *Kết quả:* Hệ thống báo màu xanh **APPROVED** đi kèm hiệu ứng bóng bay!
+
+
+2. **Khách hàng dính Tử Huyệt (Knock-out):** Chọn **Số lần từng có nợ xấu >= 1** (Ví dụ: 2 lần nợ xấu), giữ nguyên các thông số tốt khác.
+* *Kết quả:* Hệ thống lập tức kích hoạt bộ lọc luật cứng, báo màu đỏ **REJECTED** ngay lập tức mà không cần chuyển cho AI xử lý sai.
+
+
+3. **Khách hàng Mập mờ (AI phân tích hành vi):** Chọn Nợ xấu = 0, nhưng hạ thấp Thu nhập xuống tầm 10-12tr, Điểm tín dụng tầm 450-500.
+* *Kết quả:* Hồ sơ vượt qua vòng gửi xe nhưng sẽ bị **AI tính toán và từ chối** do điểm uy tín quá thấp trong lịch sử.
+
+
+

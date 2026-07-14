@@ -1,6 +1,6 @@
 
 
-## BÀI 23. BINNING 
+## NUMBERIC DATA - BÀI 23. BINNING 
 
 **Binning** (hay còn gọi là **Bucketing**) thực chất chỉ là hành động **Gom nhóm**.
 

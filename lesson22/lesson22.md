@@ -2,7 +2,7 @@
 
 ---
 [Xem thêm tại đây](https://developers.google.com/machine-learning/crash-course/numerical-data/normalization)
-### BÀI 22: CHUẨN HÓA DỮ LIỆU (DATA NORMALIZATION / SCALING)
+### NUMBERIC DATA - BÀI 22: CHUẨN HÓA DỮ LIỆU (DATA NORMALIZATION / SCALING)
 
 #### Phần 1: Ý nghĩa (Nó là gì? Tại sao phải dùng?)
 

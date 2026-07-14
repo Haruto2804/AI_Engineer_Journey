@@ -1,10 +1,10 @@
 Ý tưởng này của bạn cực kỳ thực tế! Khi làm việc với dữ liệu thật, bước đầu tiên các kỹ sư Machine Learning thường làm là vẽ biểu đồ tần suất (Histogram) ra. Chỉ cần nhìn vào "hình dáng" của biểu đồ, chúng ta có thể nhanh chóng "bắt bệnh" và chọn đúng phương pháp.
 
-Dưới đây là **Cẩm nang nhận diện bằng mắt thường** giúp bạn nhìn sơ đồ là biết ngay phải làm gì:
+Dưới đây là **Cẩm nang nhận diện bằng mắt thường** giúp bạn nhìnô sơ đồ là biết ngay phải làm gì:
 
 ### 1. Dáng biểu đồ: Dàn đều / Hình khối phẳng (Uniform Distribution)
 
-* **Dấu hiệu nhận biết:** Các cột dữ liệu cao sàn sàn nhau, dàn trải khá đều đặn. Không có đỉnh nào nhô lên quá cao đột biến và giới hạn hai đầu (min, max) rất rõ ràng.
+* **Dấu hiệu nhận biết:** Các cột dữ liệu cao sàn sàn nhau, dàn trải khá đều đặn. Khng có đỉnh nào nhô lên quá cao đột biến và giới hạn hai đầu (min, max) rất rõ ràng.
 * **Vũ khí lựa chọn:** **Tỷ lệ tuyến tính (Linear Scaling)**.
 * **Lý do:** Vì dữ liệu đã phân bố đều, việc nén chúng lại vào dải từ 0 đến 1 sẽ giữ nguyên được cấu trúc hoàn hảo này.
 

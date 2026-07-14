@@ -1,6 +1,6 @@
 
 
-## BÀI 21: WORKING WITH DATA - VISUALIZATION 
+## BÀI 21: NUMBERIC DATA -  WORKING WITH DATA - VISUALIZATION 
 ---
 
 ### PHẦN 1: Ý NGHĨA (Hình ảnh hóa là gì? Tại sao phải vẽ đồ thị?)
